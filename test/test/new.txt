@@ -1,0 +1,45 @@
+void cvConvertImage2pgm(char* filename,IplImage* srcImage,int type)
+{
+
+int width=srcImage->width;
+int height=srcImage->height;
+
+FILE *pgmPict;
+int rSize=width*height;
+        int i,j;
+pgmPict=fopen(filename,"w"); 
+if(type==2)
+{
+fprintf(pgmPict,"P2\n");
+}else if(type==5)
+{
+fprintf(pgmPict,"P5\n");
+}
+fprintf(pgmPict,"%d %d \n%d\n",width,height,255);
+if(type==5)
+{
+                unsigned char temp=0;
+for( i=0;i<srcImage->height;i++)
+{
+for( j=0;j<srcImage->width;j++)
+{
+temp=srcImage->imageData[i*srcImage->widthStep+j*3];
+fwrite((void*)&temp,sizeof(unsigned char),1,pgmPict);
+}
+}
+}
+else if(type==2)
+{
+for( i=0;i<srcImage->height;i++)
+{
+for( j=0;j<srcImage->width;j++)
+{
+int temp=(int)srcImage->imageData[i*srcImage->widthStep+j*3];
+if(temp<0)
+temp+=256;
+fprintf(pgmPict,"%d ",temp);
+}
+}
+}
+fclose(pgmPict);
+}
